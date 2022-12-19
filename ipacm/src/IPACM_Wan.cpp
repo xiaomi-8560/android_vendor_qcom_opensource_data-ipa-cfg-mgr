@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2013-2021 The Linux Foundation. All rights reserved.
+Copyright (c) 2013-2021, The Linux Foundation. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are
@@ -60,6 +60,11 @@ IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 */
+/*
+ * ​​​​​Changes from Qualcomm Innovation Center are provided under the following license:
+ * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+ * SPDX-License-Identifier: BSD-3-Clause-Clear
+ */
 /*!
 		@file
 		IPACM_Wan.cpp
@@ -87,7 +92,7 @@ typedef uint32_t in_addr_t;
 #include "IPACM_Defs.h"
 #include <IPACM_ConntrackListener.h>
 #include "linux/ipa_qmi_service_v01.h"
-#ifdef FEATURE_IPACM_HAL
+#ifdef FEATURE_IPACM_AIDL
 #include "IPACM_OffloadManager.h"
 #include <IPACM_Netlink.h>
 #endif
@@ -326,7 +331,7 @@ int IPACM_Wan::handle_addr_evt(ipacm_event_data_addr *data)
 	uint32_t num_ipv6_addr;
 	int pipe_idx;
 	int res = IPACM_SUCCESS,len;
-#ifdef FEATURE_IPACM_HAL
+#ifdef FEATURE_IPACM_AIDL
 	IPACM_OffloadManager* OffloadMng;
 #endif
 	bool sec_addr = false;
@@ -1029,7 +1034,7 @@ int IPACM_Wan::handle_addr_evt(ipacm_event_data_addr *data)
 			IPACMDBG_H_LOG("Received wan ipv4-addr:0x%x, sec_addr:%d\n",data->ipv4_addr, sec_addr);
 	}
 
-#ifdef FEATURE_IPACM_HAL
+#ifdef FEATURE_IPACM_AIDL
 	/* check if having pending set_upstream cache*/
 	OffloadMng = IPACM_OffloadManager::GetInstance();
 	if (OffloadMng == NULL) {
@@ -1324,7 +1329,7 @@ int IPACM_Wan::handle_addr_evt_mhi_q6(ipacm_event_data_addr *data)
 	struct ipa_ioc_get_hdr hdr;
 	const int NUM_RULES = 1;
 
-#ifdef FEATURE_IPACM_HAL
+#ifdef FEATURE_IPACM_AIDL
 	IPACM_OffloadManager* OffloadMng;
 #endif
 
@@ -1517,7 +1522,7 @@ int IPACM_Wan::handle_addr_evt_mhi_q6(ipacm_event_data_addr *data)
 		free(rt_rule);
 	}
 
-#ifdef FEATURE_IPACM_HAL
+#ifdef FEATURE_IPACM_AIDL
 	/* check if having pending set_upstream cache*/
 	OffloadMng = IPACM_OffloadManager::GetInstance();
 	if (OffloadMng == NULL) {
@@ -1813,7 +1818,7 @@ void IPACM_Wan::event_callback(ipa_cm_event_id event, void *param)
 		{
 			ipacm_event_data_iptype *data = (ipacm_event_data_iptype *)param;
 			ipa_interface_index = iface_ipa_index_query(data->if_index);
-#ifndef FEATURE_IPACM_HAL
+#ifndef FEATURE_IPACM_AIDL
 			/* add the check see if tether_iface is valid or not */
 			if (iface_ipa_index_query(data->if_index_tether) == INVALID_IFACE)
 			{
@@ -1844,7 +1849,7 @@ void IPACM_Wan::event_callback(ipa_cm_event_id event, void *param)
 						}
 					}
 #ifdef FEATURE_IPA_ANDROID
-#ifndef FEATURE_IPACM_HAL
+#ifndef FEATURE_IPACM_AIDL
 					/* Fixed CR 2438491 for HAL-android platform trgets.
 					   Need to revisit for non-hal-android-platform targets if issue could be reproduced there as well */
 					/* using ipa_if_index, not netdev_index */
@@ -1881,7 +1886,7 @@ void IPACM_Wan::event_callback(ipa_cm_event_id event, void *param)
 					}
 				}
 #ifdef FEATURE_IPA_ANDROID
-#ifndef FEATURE_IPACM_HAL
+#ifndef FEATURE_IPACM_AIDL
 				/* using ipa_if_index, not netdev_index */
 				post_wan_up_tether_evt(data->iptype, iface_ipa_index_query(data->if_index_tether));
 #endif
@@ -1941,7 +1946,7 @@ void IPACM_Wan::event_callback(ipa_cm_event_id event, void *param)
 		{
 			ipacm_event_data_iptype *data = (ipacm_event_data_iptype *)param;
 			ipa_interface_index = iface_ipa_index_query(data->if_index);
-#ifndef FEATURE_IPACM_HAL
+#ifndef FEATURE_IPACM_AIDL
 			/* add the check see if tether_iface is valid or not */
 			if (iface_ipa_index_query(data->if_index_tether) == INVALID_IFACE)
 			{
@@ -1957,7 +1962,7 @@ void IPACM_Wan::event_callback(ipa_cm_event_id event, void *param)
 					IPACMDBG_H("get del default v4 route (dst:0.0.0.0)\n");
 					wan_v4_addr_gw_set = false;
 #ifdef FEATURE_IPA_ANDROID
-#ifdef FEATURE_IPACM_HAL
+#ifdef FEATURE_IPACM_AIDL
 					post_wan_down_tether_evt(data->iptype, 0);
 #else
 					/* using ipa_if_index, not netdev_index */
@@ -1991,7 +1996,7 @@ void IPACM_Wan::event_callback(ipa_cm_event_id event, void *param)
 				else if ((data->iptype == IPA_IP_v6) && (active_v6 == true))
 				{
 #ifdef FEATURE_IPA_ANDROID
-#ifdef FEATURE_IPACM_HAL
+#ifdef FEATURE_IPACM_AIDL
 					post_wan_down_tether_evt(data->iptype, 0);
 #else
 
@@ -2388,7 +2393,7 @@ void IPACM_Wan::event_callback(ipa_cm_event_id event, void *param)
 			}
 		}
 		break;
-#ifdef FEATURE_IPACM_HAL
+#ifdef FEATURE_IPACM_AIDL
 	/* WA for WLAN to clean up NAT instance during SSR */
 	case IPA_SSR_NOTICE:
 	case IPA_WLAN_FWR_SSR_BEFORE_SHUTDOWN_NOTICE:
@@ -2883,7 +2888,7 @@ int IPACM_Wan::handle_route_add_evt(ipa_ip_type iptype, bool add_only)
 		evt_data.evt_data = (void *)wanup_data;
 		IPACM_EvtDispatcher::PostEvt(&evt_data);
 
-#ifdef FEATURE_IPACM_HAL
+#ifdef FEATURE_IPACM_AIDL
 		post_wan_up_tether_evt(IPA_IP_v4, 0);
 #endif
 	}
@@ -2923,7 +2928,7 @@ int IPACM_Wan::handle_route_add_evt(ipa_ip_type iptype, bool add_only)
 		evt_data.evt_data = (void *)wanup_data;
 		IPACM_EvtDispatcher::PostEvt(&evt_data);
 
-#ifdef FEATURE_IPACM_HAL
+#ifdef FEATURE_IPACM_AIDL
                 post_wan_up_tether_evt(IPA_IP_v6, 0);
 #endif
 	}
@@ -3014,7 +3019,7 @@ int IPACM_Wan::post_wan_up_tether_evt(ipa_ip_type iptype, int ipa_if_num_tether)
 	if (iptype == IPA_IP_v4)
 	{
 		evt_data.event = IPA_HANDLE_WAN_UP_TETHER;
-#ifndef FEATURE_IPACM_HAL
+#ifndef FEATURE_IPACM_AIDL
 		/* Add support tether ifaces to its array*/
 		IPACM_Wan::ipa_if_num_tether_v4[IPACM_Wan::ipa_if_num_tether_v4_total] = ipa_if_num_tether;
 		IPACMDBG_H("adding tether iface(%s) ipa_if_num_tether_v4_total(%d) on wan_iface(%s)\n",
@@ -3028,7 +3033,7 @@ int IPACM_Wan::post_wan_up_tether_evt(ipa_ip_type iptype, int ipa_if_num_tether)
 	{
 		evt_data.event = IPA_HANDLE_WAN_UP_V6_TETHER;
 		memcpy(wanup_data->ipv6_prefix, ipv6_prefix, sizeof(wanup_data->ipv6_prefix));
-#ifndef FEATURE_IPACM_HAL
+#ifndef FEATURE_IPACM_AIDL
 		/* Add support tether ifaces to its array*/
 		IPACM_Wan::ipa_if_num_tether_v6[IPACM_Wan::ipa_if_num_tether_v6_total] = ipa_if_num_tether;
 		IPACMDBG_H("adding tether iface(%s) ipa_if_num_tether_v6_total(%d) on wan_iface(%s)\n",
@@ -3068,7 +3073,7 @@ int IPACM_Wan::post_wan_down_tether_evt(ipa_ip_type iptype, int ipa_if_num_tethe
 
 	if (iptype == IPA_IP_v4)
 	{
-#ifndef FEATURE_IPACM_HAL
+#ifndef FEATURE_IPACM_AIDL
 		if(delete_tether_iface(iptype, ipa_if_num_tether))
 		{
 			IPACMDBG_H("Not finding the tethered client on ipv4.\n");
@@ -3080,7 +3085,7 @@ int IPACM_Wan::post_wan_down_tether_evt(ipa_ip_type iptype, int ipa_if_num_tethe
 	}
 	else
 	{
-#ifndef FEATURE_IPACM_HAL
+#ifndef FEATURE_IPACM_AIDL
 		if(delete_tether_iface(iptype, ipa_if_num_tether))
 		{
 			IPACMDBG_H("Not finding the tethered client on ipv6.\n");
@@ -6142,7 +6147,7 @@ int IPACM_Wan::handle_down_evt()
 
 #ifdef FEATURE_IPA_ANDROID
 		/* posting wan_down_tether for lan clients */
-#ifdef FEATURE_IPACM_HAL
+#ifdef FEATURE_IPACM_AIDL
 		IPACMDBG_H("Posting IPA_WAN_DOWN_TETHER_EVENT for IPV4\n");
 		post_wan_down_tether_evt(IPA_IP_v4, 0);
 #else
@@ -6172,7 +6177,7 @@ int IPACM_Wan::handle_down_evt()
 
 #ifdef FEATURE_IPA_ANDROID
 		/* posting wan_down_tether for lan clients */
-#ifdef FEATURE_IPACM_HAL
+#ifdef FEATURE_IPACM_AIDL
 		IPACMDBG_H("Posting IPA_WAN_DOWN_TETHER_EVENT for IPV6\n");
 		post_wan_down_tether_evt(IPA_IP_v6, 0);
 #else
@@ -6384,7 +6389,7 @@ int IPACM_Wan::handle_down_evt_ex()
 {
 	int res = IPACM_SUCCESS;
 	uint32_t i;
-#ifndef FEATURE_IPACM_HAL
+#ifndef FEATURE_IPACM_AIDL
 	uint32_t tether_total;
 	int ipa_if_num_tether_tmp[IPA_MAX_IFACE_ENTRIES];
 #endif
@@ -6440,7 +6445,7 @@ int IPACM_Wan::handle_down_evt_ex()
 			handle_route_del_evt_ex(IPA_IP_v4);
 #ifdef FEATURE_IPA_ANDROID
 			/* posting wan_down_tether for all lan clients */
-#ifdef FEATURE_IPACM_HAL
+#ifdef FEATURE_IPACM_AIDL
 			post_wan_down_tether_evt(IPA_IP_v4, 0);
 #else
 			for (i=0; i < IPACM_Wan::ipa_if_num_tether_v4_total; i++)
@@ -6553,7 +6558,7 @@ int IPACM_Wan::handle_down_evt_ex()
 			handle_route_del_evt_ex(IPA_IP_v6);
 #ifdef FEATURE_IPA_ANDROID
 			/* posting wan_down_tether for all lan clients */
-#ifdef FEATURE_IPACM_HAL
+#ifdef FEATURE_IPACM_AIDL
 			post_wan_down_tether_evt(IPA_IP_v6, 0);
 #else
 			for (i=0; i < IPACM_Wan::ipa_if_num_tether_v6_total; i++)
@@ -6662,7 +6667,7 @@ int IPACM_Wan::handle_down_evt_ex()
 			handle_route_del_evt_ex(IPA_IP_v4);
 #ifdef FEATURE_IPA_ANDROID
 			/* posting wan_down_tether for all lan clients */
-#ifdef FEATURE_IPACM_HAL
+#ifdef FEATURE_IPACM_AIDL
 			IPACMDBG_H("Posting IPA_WAN_DOWN_TETHER_EVENT for IPV4\n");
 			post_wan_down_tether_evt(IPA_IP_v4, 0);
 #else
@@ -6684,7 +6689,7 @@ int IPACM_Wan::handle_down_evt_ex()
 			handle_route_del_evt_ex(IPA_IP_v6);
 #ifdef FEATURE_IPA_ANDROID
 			/* posting wan_down_tether for all lan clients */
-#ifdef FEATURE_IPACM_HAL
+#ifdef FEATURE_IPACM_AIDL
                         IPACMDBG_H("Posting IPA_WAN_DOWN_TETHER_EVENT for IPV6\n");
                         post_wan_down_tether_evt(IPA_IP_v6, 0);
 #else
