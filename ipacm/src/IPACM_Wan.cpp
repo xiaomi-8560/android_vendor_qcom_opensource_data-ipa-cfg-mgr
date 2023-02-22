@@ -139,7 +139,6 @@ IPACM_Wan::IPACM_Wan(int iface_index,
 	wan_route_rule_v6_hdl = NULL;
 	wan_route_rule_v6_hdl_a5 = NULL;
 	wan_client = NULL;
-	mac_addr = NULL;
 
 	if(iface_query != NULL)
 	{
@@ -1050,14 +1049,8 @@ fail:
 	/* handle del_address event */
 	int IPACM_Wan::handle_addr_del_evt(ipacm_event_data_addr *data)
 	{
-		bool result;
-
-		const int NUM_RULES = 1;
 		uint32_t num_ipv6_addr, rt_idx = 0;
-		int res = IPACM_SUCCESS,len;
-#ifdef FEATURE_IPACM_HAL
-		IPACM_OffloadManager* OffloadMng;
-#endif
+		int res = IPACM_SUCCESS;
 		bool sec_addr = false, pri_addr = false;
 		int i = 0;
 		bool wan_active = false;
@@ -4452,7 +4445,6 @@ int IPACM_Wan::config_dft_firewall_rules_ex(struct ipa_flt_rule_add *rules, int 
 
 		memcpy(&(rules[pos]), &flt_rule_entry, sizeof(struct ipa_flt_rule_add));
 		IPACMDBG_H("Filter rule attrib mask: 0x%x\n",	rules[pos].rule.attrib.attrib_mask);
-		pos++;
 		num_firewall_v4++;
 		IPACM_Wan::num_v4_flt_rule++;
 
@@ -4648,7 +4640,6 @@ int IPACM_Wan::config_dft_firewall_rules_ex(struct ipa_flt_rule_add *rules, int 
 			&flt_eq.eq_attrib,
 			sizeof(flt_rule_entry.rule.eq_attrib));
 		memcpy(&(rules[pos]), &flt_rule_entry, sizeof(struct ipa_flt_rule_add));
-		pos++;
 		num_firewall_v6++;
 		IPACM_Wan::num_v6_flt_rule++;
 
@@ -6116,7 +6107,6 @@ int IPACM_Wan::handle_down_evt()
 	uint32_t i, tether_total;
 	int ipa_if_num_tether_tmp[IPA_MAX_IFACE_ENTRIES];
 
-	tether_total = 0;
 	memset(ipa_if_num_tether_tmp, 0, IPA_MAX_IFACE_ENTRIES);
 
 	IPACMDBG_H(" wan handle_down_evt \n");
@@ -9413,7 +9403,6 @@ int IPACM_Wan::handle_gw_mac_renew(ipacm_event_data_all *data, int index_client)
 				get_client_memptr(wan_client, index)->mac[3] = data->mac_addr[3];
 				get_client_memptr(wan_client, index)->mac[4] = data->mac_addr[4];
 				get_client_memptr(wan_client, index)->mac[5] = data->mac_addr[5];
-				index_client = index;
 				return IPACM_SUCCESS;
 			}
 		}

@@ -128,7 +128,6 @@ int ipa_reset_hw_index_counter();
 /* start netlink socket monitor*/
 void* netlink_start(void *param)
 {
-	param = NULL;
 	ipa_nl_sk_fd_set_info_t sk_fdset;
 	int ret_val = 0;
 	memset(&sk_fdset, 0, sizeof(ipa_nl_sk_fd_set_info_t));
@@ -157,7 +156,6 @@ void* cfg_change_monitor(void *param)
 	ipacm_cmd_q_data evt_data;
 	uint32_t mask = IN_MODIFY | IN_MOVE;
 
-	param = NULL;
 	inotify_fd = inotify_init();
 	if (inotify_fd < 0)
 	{
@@ -304,7 +302,6 @@ void* ipa_driver_msg_notifier(void *param)
 	ipa_mtu_info *mtu_info;
 #endif
 
-	param = NULL;
 	struct ipa_move_nat_req_msg_v01 *move_nat;
 	ipacm_event_move_nat *move_nat_data;
 
@@ -322,10 +319,6 @@ void* ipa_driver_msg_notifier(void *param)
 		memset(&evt_data, 0, sizeof(evt_data));
 		memset(&new_neigh_evt, 0, sizeof(ipacm_cmd_q_data));
 		new_neigh_data = NULL;
-		data = NULL;
-		data_fid = NULL;
-		data_tethering_stats = NULL;
-		data_network_stats = NULL;
 
 		length = read(fd, buffer, IPA_DRIVER_WLAN_BUF_LEN);
 		if (length < 0)
