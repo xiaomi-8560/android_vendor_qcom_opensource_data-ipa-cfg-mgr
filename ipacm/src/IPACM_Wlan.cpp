@@ -1142,9 +1142,10 @@ int IPACM_Wlan::handle_wlan_client_init_ex(ipacm_event_data_wlan_ex *data)
                  num_wifi_client,IPACM_Wlan::total_num_wifi_clients);
 
 	if ((num_wifi_client >= IPA_MAX_NUM_WIFI_CLIENTS) ||
-			(IPACM_Wlan::total_num_wifi_clients >= IPA_MAX_NUM_WIFI_CLIENTS))
+			(IPACM_Wlan::total_num_wifi_clients >= IPA_MAX_NUM_WIFI_CLIENTS) ||
+			(data->num_of_attribs > WLAN_HDR_ATTRIB_STA_ID + 1))
 	{
-		IPACMERR("Reached maximum number of wlan clients\n");
+		IPACMERR("Reached maximum number of wlan clients or exceeds number of attribs\n");
 		return IPACM_FAILURE;
 	}
 
@@ -1200,7 +1201,7 @@ int IPACM_Wlan::handle_wlan_client_init_ex(ipacm_event_data_wlan_ex *data)
 
 				for(i = 0; i < data->num_of_attribs; i++)
 				{
-					if (data->attribs[i].offset >= IPA_HDR_MAX_SIZE)
+					if (data->attribs[i].offset >= (IPA_HDR_MAX_SIZE - IPA_MAC_ADDR_SIZE))
 					{
 						IPACMERR("offset overflowing the hdr array\n");
 						res = IPACM_FAILURE;
@@ -1322,7 +1323,7 @@ int IPACM_Wlan::handle_wlan_client_init_ex(ipacm_event_data_wlan_ex *data)
 
 				for(i = 0; i < data->num_of_attribs; i++)
 				{
-					if (data->attribs[i].offset >= IPA_HDR_MAX_SIZE)
+					if (data->attribs[i].offset >= (IPA_HDR_MAX_SIZE - IPA_MAC_ADDR_SIZE))
 					{
 						IPACMERR("offset overflowing the hdr array\n");
 						res = IPACM_FAILURE;
@@ -1987,7 +1988,6 @@ int IPACM_Wlan::handle_down_evt()
 {
 	int res = IPACM_SUCCESS, num_private_subnet_fl_rule;
 	uint32_t i;
-	num_private_subnet_fl_rule = 0;
 
 	IPACMDBG_H("WLAN ip-type: %d \n", ip_type);
 	/* no iface address up, directly close iface*/

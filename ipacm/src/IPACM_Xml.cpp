@@ -280,7 +280,6 @@ static int ipacm_cfg_xml_parse_tree
 					content = IPACM_read_content_element(xml_node);
 					if (content)
 					{
-						str_size = strlen(content);
 						memset(content_buf, 0, sizeof(content_buf));
 						strlcpy(content_buf, content, MAX_XML_STR_LEN);
 						strlcpy(config->iface_config.iface_entries[config->iface_config.num_iface_entries - 1].iface_name, content_buf, IPA_IFACE_NAME_LEN);
