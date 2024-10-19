@@ -44,6 +44,8 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define __stringify(x...) #x
 
+using namespace std;
+
 const char *ipa_l2_hdr_type[] = {
 	__stringify(NONE),
 	__stringify(ETH_II),
